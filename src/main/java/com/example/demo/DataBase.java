@@ -23,13 +23,9 @@ public class DataBase {
         //查询数据库，必须要批量查询
         int fc = dao.foodcount();//查询总行数    8
         int start = 0;  //开始位置
-        int rows = 5;   //每页行数
-        /*
-         * 0---4  5
-         * 5---9  5
-         * 10---14  5
-         */
-        while(start<=fc){
+        int rows = 10;   //每页行数
+
+        while(start<=fc&&rows<=fc){
             //每拉取一次数据
             List<Map<String, Object>> queryFood=dao.queryFood(start, rows);
             //获取字段
@@ -43,6 +39,7 @@ public class DataBase {
                 Field foodname=new Field("foodname",lineData.get("foodname").toString(),TextField.TYPE_STORED);
                 Field price=new Field("price",lineData.get("price").toString(),TextField.TYPE_STORED);
                 Field imagepath=new Field("imagepath",lineData.get("imagepath").toString(),TextField.TYPE_STORED);
+                foodname.setBoost(4f);
                 //添加到Document中
                 doc.add(foodid);
                 doc.add(foodname);
@@ -50,9 +47,9 @@ public class DataBase {
                 doc.add(imagepath);
                 //调用，创建索引库
                 indexDemo.write(doc);
+                System.out.println("id:"+lineData.get("foodid").toString());
             }
-            start=rows+1;
-            rows=start+5;
+            start=start+10;
         }
         return "成功";
     }
